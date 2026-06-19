@@ -1,25 +1,27 @@
 import contentstack, { QueryOperation } from "@contentstack/delivery-sdk";
 import ContentstackLivePreview, { IStackSdk } from "@contentstack/live-preview-utils";
 import { Page, ProductLine, Header, MegaMenu, Category, Product } from "./types";
-import { getContentstackEndpoints, getRegionForString } from "@timbenniks/contentstack-endpoints";
+import { getContentstackEndpoint, type ContentstackEndpoints } from "@contentstack/utils";
 import type { Metadata } from "next";
 import type { EmbeddedItem } from '@contentstack/utils/dist/types/Models/embedded-object'
 
-const region = getRegionForString(process.env.NEXT_PUBLIC_CONTENTSTACK_REGION as string)
-const endpoints = getContentstackEndpoints(region, true)
+const endpoints = getContentstackEndpoint(process.env.NEXT_PUBLIC_CONTENTSTACK_REGION || 'NA', '', true) as ContentstackEndpoints
 export const isPreview = process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW === "true";
 
 export const stack = contentstack.stack({
   apiKey: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY as string,
   deliveryToken: process.env.NEXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN as string,
   environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT as string,
-  region: region ? region : process.env.NEXT_PUBLIC_CONTENTSTACK_REGION as any,
-  host: process.env.NEXT_PUBLIC_CONTENTSTACK_CONTENT_DELIVERY || endpoints && endpoints.contentDelivery,
+
+  // Certain API endpoints can be set via environment variables for custom or dedicated Contentstack environments.
+  // You can omit these in your project. Use @contentstack/utils getContentstackEndpoint to get the right urls for your region.
+  region: process.env.NEXT_PUBLIC_CONTENTSTACK_REGION as any,
+  host: process.env.NEXT_PUBLIC_CONTENTSTACK_CONTENT_DELIVERY || endpoints.contentDelivery as string,
 
   live_preview: {
     enable: process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW === 'true',
     preview_token: process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW_TOKEN,
-    host: process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW_HOST || endpoints && endpoints.preview
+    host: process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW_HOST || endpoints.preview as string
   }
 });
 
@@ -34,7 +36,7 @@ export function initLivePreview() {
       environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT as string,
     },
     clientUrlParams: {
-      host: process.env.NEXT_PUBLIC_CONTENTSTACK_CONTENT_APPLICATION || endpoints && endpoints.application
+      host: process.env.NEXT_PUBLIC_CONTENTSTACK_CONTENT_APPLICATION || endpoints.application as string
     },
     editButton: {
       enable: true,

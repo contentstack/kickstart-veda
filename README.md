@@ -125,7 +125,7 @@ To use: Open any entry in Contentstack → Click Live Preview → Edit and see c
 
 - **Dynamic Components**: `ComponentsRenderer` maps Contentstack modular blocks to React components
 - **Type-Safe Fetching**: TypeScript interfaces for all content types with React Cache
-- **Region-Specific SDK**: Configured for EU region with automatic endpoint resolution
+- **Region-Specific SDK**: Automatic endpoint resolution via `getContentstackEndpoint` from `@contentstack/utils` — supports all 7 Contentstack regions
 - **CSLP Integration**: Components receive `$` prop with editable tags for Live Preview
 - **Catch-All Routing**: `[[...slug]]` handles all dynamic pages with ISR (30-min revalidation)
 - **Unified Data Fetching**: `pageUtils.ts` provides consistent data fetching across all page types
@@ -219,3 +219,45 @@ MIT License - see [LICENSE](https://github.com/contentstack/kickstart-veda/blob/
 ---
 
 **Built with ❤️ by Contentstack**
+
+---
+
+## Regions and endpoint configuration
+
+Set `NEXT_PUBLIC_CONTENTSTACK_REGION` to the value matching your Contentstack account region:
+
+| Region | Value |
+|---|---|
+| North America (default) | `NA` or `US` |
+| Europe | `EU` |
+| Australia | `AU` |
+| Azure North America | `AZURE-NA` |
+| Azure Europe | `AZURE-EU` |
+| GCP North America | `GCP-NA` |
+| GCP Europe | `GCP-EU` |
+
+The app uses `getContentstackEndpoint` from `@contentstack/utils` to resolve the correct API hostnames for your region automatically. The following endpoint keys are resolved:
+
+| Key | NA value |
+|---|---|
+| `contentDelivery` | `cdn.contentstack.io` |
+| `preview` | `rest-preview.contentstack.com` |
+| `application` | `app.contentstack.com` |
+| `graphqlDelivery` | `graphql.contentstack.com` |
+| `graphqlPreview` | `graphql-preview.contentstack.com` |
+| `images` | `images.contentstack.io` |
+| `assets` | `assets.contentstack.io` |
+| `contentManagement` | `api.contentstack.io` |
+| `auth` | `auth.contentstack.io` |
+
+### Custom or dedicated environments
+
+If you are on a dedicated or private cloud Contentstack instance, you can override the resolved endpoints via environment variables:
+
+```
+NEXT_PUBLIC_CONTENTSTACK_CONTENT_DELIVERY=your-custom-cdn.example.com
+NEXT_PUBLIC_CONTENTSTACK_PREVIEW_HOST=your-custom-preview.example.com
+NEXT_PUBLIC_CONTENTSTACK_CONTENT_APPLICATION=your-custom-app.example.com
+```
+
+These override values take precedence over the region-resolved endpoints.
