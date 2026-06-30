@@ -28,7 +28,7 @@
 
 import fs from "fs";
 import path from "path";
-import contentstack, { Region } from "@contentstack/delivery-sdk";
+import contentstack from "@contentstack/delivery-sdk";
 import dotenv from "dotenv";
 
 // Load environment variables from .env.local
@@ -48,7 +48,7 @@ async function getAllLinks() {
     apiKey: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY,
     deliveryToken: process.env.NEXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN,
     environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT,
-    region: Region[process.env.NEXT_PUBLIC_CONTENTSTACK_REGION],
+    region: process.env.NEXT_PUBLIC_CONTENTSTACK_REGION,
   });
 
   // Fetch URLs from all content types in parallel for better performance
